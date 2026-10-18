@@ -1,0 +1,209 @@
+type: "radio",
+        options: [
+          { text: "<a>", correct: true },
+          { text: "<link>", correct: false },
+          { text: "<href>", correct: false },
+          { text: "<url>", correct: false }
+        ]
+      },
+      {
+        id: 2,
+        question: "Какие из этих свойств относятся к Flexbox в CSS?",
+        type: "checkbox",
+        options: [
+          { text: "display: flex;", correct: true },
+          { text: "justify-content", correct: true },
+          { text: "grid-template-columns", correct: false },
+          { text: "align-items", correct: true }
+        ]
+      },
+      {
+        id: 3,
+        question: "Какой метод JavaScript преобразует объект в JSON-строку?",
+        type: "radio",
+        options: [
+          { text: "JSON.parse()", correct: false },
+          { text: "JSON.stringify()", correct: true },
+          { text: "JSON.toObject()", correct: false },
+          { text: "Object.toJSON()", correct: false }
+        ]
+      }
+    ];
+
+    document.getElementById('maxScore').textContent = questionsData.length;
+
+    const questionsContainer = document.getElementById('questions');
+    const submitBtn = document.getElementById('submitBtn');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const quizContent = document.getElementById('quizContent');
+    const resultScreen = document.getElementById('resultScreen');
+
+    let userAnswers = {};
+    let isSubmitted = false;
+
+    function renderQuiz() {
+      questionsContainer.innerHTML = '';
+      
+      questionsData.forEach((q, qIndex) => {
+        userAnswers[q.id] = [];
+        
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = q-card-${q.id};
+        
+        const numberBadge = document.createElement('span');
+        numberBadge.className = 'q-number';
+        numberBadge.textContent = Вопрос ${qIndex + 1};
+        
+        const qText = document.createElement('h3');
+        qText.className = 'q-text';
+        qText.textContent = q.question;
+        
+        const optionsWrap = document.createElement('div');
+        optionsWrap.className = 'options';
+        
+        q.options.forEach((opt, oIndex) => {
+          const optionLabel = document.createElement('label');
+          optionLabel.className = 'option';
+          optionLabel.dataset.qId = q.id;
+          optionLabel.dataset.oIndex = oIndex;
+          
+          const input = document.createElement('input');
+          input.type = q.type === 'radio' ? 'radio' : 'checkbox';
+          input.name = question_${q.id};
+          
+          const indicator = document.createElement('div');
+          indicator.className = q.type === 'radio' ? 'radio-circle' : 'check-box';
+          
+          const textSpan = document.createElement('span');
+          textSpan.textContent = opt.text;
+          
+          optionLabel.appendChild(input);
+          optionLabel.appendChild(indicator);
+          optionLabel.appendChild(textSpan);
+          
+          optionLabel.addEventListener('click', () => {
+            if (isSubmitted) return;
+            
+            card.classList.remove('unanswered');
+            
+            if (q.type === 'radio') {
+              optionsWrap.querySelectorAll('.option').forEach(optEl => {
+                optEl.classList.remove('selected');
+                optEl.querySelector('input').checked = false;
+              });
+              optionLabel.classList.add('selected');
+              input.checked = true;
+              userAnswers[q.id] = [oIndex];
+            } else {
+              optionLabel.classList.toggle('selected');
+              input.checked = optionLabel.classList.contains('selected');
+              
+              const selected = [];
+              optionsWrap.querySelectorAll('.option.selected').forEach(el => {
+                selected.push(parseInt(el.dataset.oIndex));
+              });
+              userAnswers[q.id] = selected;
+            }
+            
+            updateProgress();
+          });
+          
+          optionsWrap.appendChild(optionLabel);
+        });
+        
+        card.appendChild(numberBadge);
+        card.appendChild(qText);
+        card.appendChild(optionsWrap);
+        questionsContainer.appendChild(card);
+      });
+      
+      updateProgress();
+    }
+
+    function updateProgress() {
+      let answeredCount = 0;
+      
+      questionsData.forEach(q => {
+        if (userAnswers[q.id] && userAnswers[q.id].length > 0) {
+          answeredCount++;
+        }
+      });
+      
+      const percent = (answeredCount / questionsData.length) * 100;
+      progressBar.style.width = ${percent}%;
+      progressText.textContent = Вопрос ${answeredCount} из ${questionsData.length};
+      
+      if (answeredCount === questionsData.length) {
+        submitBtn.removeAttribute('disabled');
+      } else {
+        submitBtn.setAttribute('disabled', 'true');
+      }
+    }
+
+    function checkAnswers() {
+      if (isSubmitted) return;
+      isSubmitted = true;
+      
+      let score = 0;
+      
+      questionsData.forEach(q => {
+        const userSelection = userAnswers[q.id] || [];
+        const correctIndices = [];
+        q.options.forEach((opt, idx) => {
+          if (opt.correct) correctIndices.push(idx);
+        });
+        
+        const card = document.getElementById(q-card-${q.id});
+        const optionsElements = card.querySelectorAll('.option');
+        
+        const isCorrect = 
+          userSelection.length === correctIndices.length &&
+          userSelection.every(val => correctIndices.includes(val));
+          
+        if (isCorrect) {
+          score++;
+        }
+        
+        optionsElements.forEach((optEl, idx) => {
+          if (correctIndices.includes(idx)) {
+            optEl.classList.add('correct');
+          } else if (userSelection.includes(idx)) {
+            optEl.classList.add('wrong');
+          }
+        });
+      });
+      
+      showResults(score);
+    }
+
+    function showResults(score) {
+      quizContent.classList.add('hide');
+      resultScreen.classList.add('show');
+      
+      document.getElementById('scoreNumber').textContent = score;
+      
+      const titleEl = document.getElementById('resultTitle');
+      const descEl = document.getElementById('resultDesc');
+      const max = questionsData.length;
+      const percent = score / max;
+      
+      if (percent === 1) {
+        titleEl.textContent = "Идеально! 🎉";
+        descEl.textContent = "Вы ответили абсолютно на все вопросы правильно.";
+      } else if (percent >= 0.7) {
+        titleEl.textContent = "Отличный результат! 👏";
+        descEl.textContent = "Вы показали хорошие знания, но есть небольшие области для роста.";
+      } else {
+        titleEl.textContent = "Стоит попробовать ещё раз 📚";
+        descEl.textContent = "Отличный повод освежить знания и пройти тест заново.";
+      }
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    renderQuiz();
+  </script>
+</body>
+</html>
