@@ -1,209 +1,685 @@
-type: "radio",
-        options: [
-          { text: "<a>", correct: true },
-          { text: "<link>", correct: false },
-          { text: "<href>", correct: false },
-          { text: "<url>", correct: false }
-        ]
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест: Мои интрижки 💕</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg: #0f0a12;
+      --card: #1a1220;
+      --accent: #ff4d8d;
+      --accent-soft: #ff4d8d33;
+      --text: #f5e6f0;
+      --muted: #b89ab0;
+      --correct: #2ecc71;
+      --wrong: #e74c3c;
+      --border: #3a2a40;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      background-image: 
+        radial-gradient(ellipse at 20% 20%, #2a1030 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, #1a0a25 0%, transparent 50%);
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-top: 20px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff4d8d, #c44dff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .progress-wrap {
+      background: var(--card);
+      border-radius: 999px;
+      height: 8px;
+      margin: 24px 0 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #ff4d8d, #c44dff);
+      width: 0%;
+      transition: width 0.4s ease;
+      border-radius: 999px;
+    }
+
+    .progress-text {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .question-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .question-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 77, 141, 0.1);
+    }
+
+    .question-card.unanswered {
+      border-color: #e74c3c;
+      box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.3);
+    }
+
+    .q-number {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .q-text {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: #22162a;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .option:hover {
+      border-color: var(--accent);
+      background: #2a1a35;
+    }
+
+    .option.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .option input {
+      display: none;
+    }
+
+    .radio-circle, .check-box {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--muted);
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .check-box {
+      border-radius: 6px;
+    }
+
+    .option.selected .radio-circle,
+    .option.selected .check-box {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .option.selected .radio-circle::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .option.
+selected .check-box::after {
+      content: '✓';
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .option.correct {
+      border-color: var(--correct);
+      background: rgba(46, 204, 113, 0.15);
+    }
+
+    .option.wrong {
+      border-color: var(--wrong);
+      background: rgba(231, 76, 60, 0.15);
+    }
+
+    .option.correct .radio-circle,
+    .option.correct .check-box {
+      border-color: var(--correct);
+      background: var(--correct);
+    }
+
+    .option.wrong .radio-circle,
+    .option.wrong .check-box {
+      border-color: var(--wrong);
+      background: var(--wrong);
+    }
+
+    .btn-wrap {
+      position: sticky;
+      bottom: 0;
+      background: linear-gradient(transparent, var(--bg) 30%);
+      padding: 24px 0 16px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ff4d8d, #c44dff);
+      color: white;
+      box-shadow: 0 4px 20px rgba(255, 77, 141, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(255, 77, 141, 0.5);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+    }
+
+    .result-screen {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .result-screen.show {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .score-circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 4px solid var(--accent);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 0 40px var(--accent-soft);
+    }
+
+    .score-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .score-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .result-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .result-desc {
+      color: var(--muted);
+      margin-bottom: 32px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .quiz-content.hide {
+      display: none;
+    }
+
+    .note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.5rem; }
+      .q-text { font-size: 1.05rem; }
+      .question-card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>💕 Мои интрижки</h1>
+      <p class="subtitle">Тест на знание моей романтической истории</p>
+    </header>
+
+    <div class="quiz-content" id="quizContent">
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <p class="progress-text" id="progressText">Вопрос 0 из 20</p>
+
+      <div id="questions"></div>
+
+      <div class="btn-wrap">
+        <button class="btn-primary" id="submitBtn" onclick="checkAnswers()" disabled>Проверить ответы</button>
+      </div>
+    </div>
+
+    <div class="result-screen" id="resultScreen">
+      <div class="score-circle">
+        <span class="score-number" id="scoreNumber">0</span>
+        <span class="score-label">из <span id="maxScore">16</span></span>
+      </div>
+      <h2 class="result-title" id="resultTitle">Результат</h2>
+      <p class="result-desc" id="resultDesc"></p>
+      <button class="btn-primary" onclick="location.
+reload()">Пройти ещё раз</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        id: 1,
+        text: "Сколько интрижек у меня было за всё время?",
+        options: ["2", "6", "7", "16"],
+        correct: [2],
+        multi: false
       },
       {
         id: 2,
-        question: "Какие из этих свойств относятся к Flexbox в CSS?",
-        type: "checkbox",
-        options: [
-          { text: "display: flex;", correct: true },
-          { text: "justify-content", correct: true },
-          { text: "grid-template-columns", correct: false },
-          { text: "align-items", correct: true }
-        ]
+        text: "С кем началась моя самая первая интрижка?",
+        options: ["Саша", "Максим Б", "Антон", "Влад"],
+        correct: null,
+        multi: false
       },
       {
         id: 3,
-        question: "Какой метод JavaScript преобразует объект в JSON-строку?",
-        type: "radio",
-        options: [
-          { text: "JSON.parse()", correct: false },
-          { text: "JSON.stringify()", correct: true },
-          { text: "JSON.toObject()", correct: false },
-          { text: "Object.toJSON()", correct: false }
-        ]
+        text: "Кто мне понравился самым неожиданным образом?",
+        options: ["Егор", "Лёша", "Максим Ч", "Женя"],
+        correct: null,
+        multi: false
+      },
+      {
+        id: 4,
+        text: "С кем у меня была самая долгая переписка?",
+        options: ["Серёжа", "Максим Ч", "Федя", "Егор"],
+        correct: null,
+        multi: false
+      },
+      {
+        id: 5,
+        text: "Кто первым проявил ко мне интерес?",
+        options: ["Лёша", "Боча", "Дима", "Матвей", "Максим"],
+        correct: [1],
+        multi: false
+      },
+      {
+        id: 6,
+        text: "С кем у меня был самый сильный краш?",
+        options: ["Лёша", "Чига", "Утка", "Дима"],
+        correct: [1],
+        multi: false
+      },
+      {
+        id: 7,
+        text: "Кто из моих симпатий был самым красивым, по моему мнению?",
+        options: ["Лёша", "Матвей", "Дима", "Максим", "Никто"],
+        correct: [4],
+        multi: false
+      },
+      {
+        id: 8,
+        text: "С кем у меня была самая запутанная история?",
+        options: ["Лёша", "Утка", "Дима", "Чига", "Стёпа"],
+        correct: [3],
+        multi: false
+      },
+      {
+        id: 9,
+        text: "Кто давал мне больше всего смешанных сигналов?",
+        options: ["Лёша", "Матвей", "Дима", "Чига"],
+        correct: [3],
+        multi: false
+      },
+      {
+        id: 10,
+        text: "С кем у меня была самая неожиданная встреча?",
+        options: ["Лёша", "Чига", "Утка", "Боча"],
+        correct: [0, 1],
+        multi: true
+      },
+      {
+        id: 11,
+        text: "Кто ревновал меня сильнее всех?",
+        options: ["Лёша", "Дима", "Матвей", "Чига"],
+        correct: [2],
+        multi: false
+      },
+      {
+        id: 12,
+        text: "С кем я больше всего флиртовала?",
+        options: ["Лёша", "Чига", "Матвей", "Никита", "Боча"],
+        correct: [1],
+        multi: false
+      },
+      {
+        id: 13,
+        text: "Кто мне нравился, но я это скрывала?",
+        options: ["Лёша", "Матвей", "Чига", "Боча", "Никита"],
+        correct: [2],
+        multi: false
+      },
+      {
+        id: 14,
+        text: "С кем у меня была самая неловкая ситуация?",
+        options: ["Максим Ч", "Ярик", "Матвей", "Илья", "Боча", "Лёша"],
+        correct: [0],
+        multi: false
+      },
+      {
+        id: 15,
+        text: "Кто чаще всего писал мне первым?",
+        options: ["Лёша", "Матвей", "Дима", "Максим Ч"],
+        correct: [0],
+        multi: false
+      },
+      {
+        id: 16,
+        text: "По кому я скучала больше всего?",
+        options: ["Лёша", "Максим Ч", "Матвей", "Максим Б", "Никому"],
+        correct: [4],
+        multi: false
+      },
+      {
+        id: 17,
+        text: "С кем у меня была самая короткая интрижка?",
+        options: ["Лёша", "Матвей", "Максим Ч", "Максим Б", "Максим З", "Никита"],
+        correct: [0],
+        multi: false
+      },
+      {
+        id: 18,
+        text: "Кто оказался совсем не таким, каким казался сначала?",
+        options: ["Лёша", "Матвей", "Дима", "Антон"],
+        correct: [1],
+        multi: false
+      },
+      {
+        id: 19,
+        text: "К кому у меня до сих пор остались вопросы или чувства?",
+        options: ["Лёша", "Максим Ч", "Влад", "Максим Б"],
+        correct: [1],
+        multi: false
+      },
+      {
+        id: 20,
+        text: "Какая моя интрижка была самой легендарной?",
+        options: ["Лёша", "Андрей", "Максим", "Матвей", "Даня"],
+        correct: [3],
+        multi: false
       }
     ];
 
-    document.getElementById('maxScore').textContent = questionsData.length;
+    const answers = {};
 
-    const questionsContainer = document.getElementById('questions');
-    const submitBtn = document.getElementById('submitBtn');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
-    const quizContent = document.getElementById('quizContent');
-    const resultScreen = document.getElementById('resultScreen');
+    function renderQuestions() {
+      const container = document.
+getElementById('questions');
+      container.innerHTML = '';
 
-    let userAnswers = {};
-    let isSubmitted = false;
-
-    function renderQuiz() {
-      questionsContainer.innerHTML = '';
-      
-      questionsData.forEach((q, qIndex) => {
-        userAnswers[q.id] = [];
-        
+      questions.forEach((q) => {
         const card = document.createElement('div');
         card.className = 'question-card';
-        card.id = q-card-${q.id};
-        
-        const numberBadge = document.createElement('span');
-        numberBadge.className = 'q-number';
-        numberBadge.textContent = Вопрос ${qIndex + 1};
-        
-        const qText = document.createElement('h3');
-        qText.className = 'q-text';
-        qText.textContent = q.question;
-        
-        const optionsWrap = document.createElement('div');
-        optionsWrap.className = 'options';
-        
-        q.options.forEach((opt, oIndex) => {
-          const optionLabel = document.createElement('label');
-          optionLabel.className = 'option';
-          optionLabel.dataset.qId = q.id;
-          optionLabel.dataset.oIndex = oIndex;
-          
-          const input = document.createElement('input');
-          input.type = q.type === 'radio' ? 'radio' : 'checkbox';
-          input.name = question_${q.id};
-          
-          const indicator = document.createElement('div');
-          indicator.className = q.type === 'radio' ? 'radio-circle' : 'check-box';
-          
-          const textSpan = document.createElement('span');
-          textSpan.textContent = opt.text;
-          
-          optionLabel.appendChild(input);
-          optionLabel.appendChild(indicator);
-          optionLabel.appendChild(textSpan);
-          
-          optionLabel.addEventListener('click', () => {
-            if (isSubmitted) return;
-            
-            card.classList.remove('unanswered');
-            
-            if (q.type === 'radio') {
-              optionsWrap.querySelectorAll('.option').forEach(optEl => {
-                optEl.classList.remove('selected');
-                optEl.querySelector('input').checked = false;
-              });
-              optionLabel.classList.add('selected');
-              input.checked = true;
-              userAnswers[q.id] = [oIndex];
-            } else {
-              optionLabel.classList.toggle('selected');
-              input.checked = optionLabel.classList.contains('selected');
-              
-              const selected = [];
-              optionsWrap.querySelectorAll('.option.selected').forEach(el => {
-                selected.push(parseInt(el.dataset.oIndex));
-              });
-              userAnswers[q.id] = selected;
-            }
-            
-            updateProgress();
-          });
-          
-          optionsWrap.appendChild(optionLabel);
-        });
-        
-        card.appendChild(numberBadge);
-        card.appendChild(qText);
-        card.appendChild(optionsWrap);
-        questionsContainer.appendChild(card);
+        card.dataset.id = q.id;
+
+        let optionsHtml = q.options.map((opt, i) => {
+          const inputType = q.multi ? 'checkbox' : 'radio';
+          const name = q${q.id};
+          return `
+            <label class="option" data-q="${q.id}" data-i="${i}">
+              <input type="${inputType}" name="${name}" value="${i}">
+              <span class="${q.multi ? 'check-box' : 'radio-circle'}"></span>
+              <span>${opt}</span>
+            </label>
+          `;
+        }).join('');
+
+        const note = q.correct === null ? '<p class="note">* Этот вопрос без правильного ответа в данных</p>' : '';
+
+        card.innerHTML = `
+          <span class="q-number">Вопрос ${q.id}</span>
+          <div class="q-text">${q.text}</div>
+          <div class="options">${optionsHtml}</div>
+          ${note}
+        `;
+        container.appendChild(card);
       });
-      
+
+      document.getElementById('questions').addEventListener('click', function(e) {
+        const opt = e.target.closest('.option');
+        if (!opt) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const qId = parseInt(opt.dataset.q);
+        const idx = parseInt(opt.dataset.i);
+        const q = questions.find(qq => qq.id === qId);
+        if (!q) return;
+
+        const card = opt.closest('.question-card');
+        if (card) card.classList.remove('unanswered');
+
+        if (q.multi) {
+          if (!answers[qId]) answers[qId] = [];
+          const pos = answers[qId].indexOf(idx);
+          if (pos > -1) {
+            answers[qId].splice(pos, 1);
+            opt.classList.remove('selected');
+          } else {
+            answers[qId].push(idx);
+            opt.classList.add('selected');
+          }
+        } else {
+          answers[qId] = [idx];
+          opt.closest('.options').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+        }
+        updateProgress();
+      });
+
       updateProgress();
     }
 
     function updateProgress() {
-      let answeredCount = 0;
-      
-      questionsData.forEach(q => {
-        if (userAnswers[q.id] && userAnswers[q.id].length > 0) {
-          answeredCount++;
-        }
-      });
-      
-      const percent = (answeredCount / questionsData.length) * 100;
-      progressBar.style.width = ${percent}%;
-      progressText.textContent = Вопрос ${answeredCount} из ${questionsData.length};
-      
-      if (answeredCount === questionsData.length) {
-        submitBtn.removeAttribute('disabled');
-      } else {
-        submitBtn.setAttribute('disabled', 'true');
-      }
+      const answered = Object.keys(answers).filter(k => answers[k] && answers[k].length > 0).length;
+      const total = questions.length;
+      const percent = (answered / total) * 100;
+      document.getElementById('progressBar').style.width = percent + '%';
+      document.getElementById('progressText').textContent = Отвечено ${answered} из ${total};
+      document.getElementById('submitBtn').disabled = answered === 0;
     }
 
     function checkAnswers() {
-      if (isSubmitted) return;
-      isSubmitted = true;
-      
-      let score = 0;
-      
-      questionsData.forEach(q => {
-        const userSelection = userAnswers[q.id] || [];
-        const correctIndices = [];
-        q.options.forEach((opt, idx) => {
-          if (opt.correct) correctIndices.push(idx);
-        });
-        
-        const card = document.getElementById(q-card-${q.id});
-        const optionsElements = card.querySelectorAll('.option');
-        
-        const isCorrect = 
-          userSelection.length === correctIndices.length &&
-          userSelection.every(val => correctIndices.includes(val));
-          
-        if (isCorrect) {
-          score++;
+      let hasUnanswered = false;
+      questions.forEach(q => {
+        const card = document.querySelector(`.question-card[data-id="${q.id}"]`);
+        const selected = answers[q.id] || [];
+        if (selected.length === 0) {
+          card.classList.add('unanswered');
+          hasUnanswered = true;
+        } else {
+          card.classList.remove('unanswered');
         }
-        
-        optionsElements.forEach((optEl, idx) => {
-          if (correctIndices.includes(idx)) {
-            optEl.classList.add('correct');
-          } else if (userSelection.includes(idx)) {
-            optEl.classList.add('wrong');
+      });
+
+      if (hasUnanswered) {
+        const firstUnanswered = document.querySelector('.question-card.unanswered');
+        if (firstUnanswered) {
+          firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        alert('Ответь на все вопросы, пожалуйста! Неотвеченные вопросы подсвечены красным.');
+        return;
+      }
+
+      let score = 0;
+      let maxScore = 0;
+
+      questions.forEach(q => {
+        const card = document.querySelector(`.question-card[data-id="${q.id}"]`);
+        const selected = answers[q.id] || [];
+
+        card.querySelectorAll('.option').forEach(opt => {
+          const i = parseInt(opt.dataset.i);
+          opt.classList.remove('selected', 'correct', 'wrong');
+
+          if (q.correct === null) {
+            if (selected.includes(i)) opt.classList.add('selected');
+            return;
+          }
+
+          const isCorrectOpt = q.correct.includes(i);
+          const isSelected = selected.includes(i);
+
+          if (isCorrectOpt) {
+            opt.classList.
+add('correct');
+          } else if (isSelected) {
+            opt.classList.add('wrong');
           }
         });
-      });
-      
-      showResults(score);
-    }
 
-    function showResults(score) {
-      quizContent.classList.add('hide');
-      resultScreen.classList.add('show');
-      
+        if (q.correct !== null) {
+          maxScore++;
+          const sortedSel = [...selected].sort((a,b) => a-b);
+          const sortedCor = [...q.correct].sort((a,b) => a-b);
+          if (JSON.stringify(sortedSel) === JSON.stringify(sortedCor)) {
+            score++;
+          }
+        }
+      });
+
+      document.getElementById('quizContent').classList.add('hide');
+      document.getElementById('resultScreen').classList.add('show');
       document.getElementById('scoreNumber').textContent = score;
-      
-      const titleEl = document.getElementById('resultTitle');
-      const descEl = document.getElementById('resultDesc');
-      const max = questionsData.length;
-      const percent = score / max;
-      
-      if (percent === 1) {
-        titleEl.textContent = "Идеально! 🎉";
-        descEl.textContent = "Вы ответили абсолютно на все вопросы правильно.";
-      } else if (percent >= 0.7) {
-        titleEl.textContent = "Отличный результат! 👏";
-        descEl.textContent = "Вы показали хорошие знания, но есть небольшие области для роста.";
+      document.getElementById('maxScore').textContent = maxScore;
+
+      let title, desc;
+      const percent = maxScore > 0 ? (score / maxScore) * 100 : 0;
+      if (percent === 100) {
+        title = "Идеально! 🔥";
+        desc = "Ты знаешь все мои интрижки лучше, чем я сама. Легенда!";
+      } else if (percent >= 80) {
+        title = "Почти идеально! 💕";
+        desc = "Ты очень хорошо разбираешься в моей романтической истории.";
+      } else if (percent >= 50) {
+        title = "Неплохо! 😊";
+        desc = "Есть пробелы, но в целом ты в курсе основных событий.";
       } else {
-        titleEl.textContent = "Стоит попробовать ещё раз 📚";
-        descEl.textContent = "Отличный повод освежить знания и пройти тест заново.";
+        title = "Нужно повторить материал 😅";
+        desc = "Похоже, пора рассказать тебе всё заново...";
       }
-      
+      document.getElementById('resultTitle').textContent = title;
+      document.getElementById('resultDesc').textContent = desc;
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    renderQuiz();
+    renderQuestions();
   </script>
 </body>
 </html>
